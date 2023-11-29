@@ -1,4 +1,4 @@
-#include <fstream>
+#include <iostream>
 #include <queue>
 #include <vector>
 #include <algorithm>
@@ -36,9 +36,6 @@ using namespace __gnu_pbds;
 typedef tree<ll, null_type, less_equal<ll>, rb_tree_tag, tree_order_statistics_node_update> ost;
 
 ///__builtin_popcount(x)
-
-ifstream cin("date.in");
-ofstream cout("date.out");
 
 constexpr int p = 666013;
 constexpr int mod = 1674329;

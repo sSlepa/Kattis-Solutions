@@ -1,0 +1,95 @@
+///https://open.kattis.com/problems/hauntedgraveyard
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+
+#define INF 0x3f3f3f3f
+
+int V,dist[900],u[3600],v[3600],cost[3600];
+bool used[900];
+int N,M,G,holes,xs,ys,xf,yf,t,node_cnt;
+int di[]={0,0,1,-1},dj[]={1,-1,0,0};
+bool gr[36][36],tp[36][36];
+bool in_mat(int i,int j){
+    return (i>=0 && j>=0 && i<N && j<M);
+}
+
+void belman(){
+    
+    for(int i = 0 ; i < N * M ; ++i)
+        dist[i] = INF, used[i] = 0;
+        
+    dist[0] = 0;
+    used[0] = 1;
+    
+    for(int i = 1 ; i < N * M ; ++i)
+        for(int nod = 0 ; nod < node_cnt ; ++nod){
+            if(dist[u[nod]] + cost[nod] < dist[v[nod]]){
+                if(used[u[nod]])
+                    used[v[nod]] = 1;
+                
+                dist[v[nod]] = dist[u[nod]] + cost[nod];
+                
+            }
+        }
+    for(int nod = 0 ; nod < node_cnt ; ++nod){
+        if(used[u[nod]] && dist[u[nod]] + cost[nod] < dist[v[nod]]){
+            cout << "Never\n";
+            return;
+        }
+    }
+    if(!used[N * M - 1])
+        cout << "Impossible\n";
+    else
+        cout << dist[N * M - 1] << '\n';
+}
+
+int main(){
+    while (true){
+        cin>>N>>M;
+        if (N==0 && M==0)
+        break;
+        memset(gr,0,sizeof(gr));
+        memset(tp,0,sizeof(tp));
+        cin>>G;
+        for (int i=0; i<G; i++){
+            cin>>xs>>ys;
+            gr[xs][ys]=1;
+        }
+        cin>>holes;
+        node_cnt=0;
+        for (int i=0; i<holes; i++){
+            cin>>xs>>ys>>xf>>yf>>t;
+            tp[xs][ys]=1;
+            u[node_cnt]=xs*M+ys;
+            v[node_cnt]=xf*M+yf;
+            cost[node_cnt]=t;
+            node_cnt++;
+        }
+        for (int i=0; i<N; i++){
+            for (int j=0; j<M; j++){
+                if (gr[i][j] || tp[i][j] || (i==N-1 && j==M-1)){
+                    continue;
+                }
+                
+                for (int d=0; d<4; d++){
+                    int ii=i+di[d];
+                    int jj=j+dj[d];
+                    if (in_mat(ii,jj) && !gr[ii][jj]){
+                        u[node_cnt]=i*M+j;
+                        v[node_cnt]=ii*M+jj;
+                        cost[node_cnt]=1;
+                        ++node_cnt;
+                    }
+                }
+            }
+        }
+        belman();
+    }
+    
+    return 0;
+}
